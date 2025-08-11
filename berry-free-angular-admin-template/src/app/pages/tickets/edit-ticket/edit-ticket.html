@@ -1,0 +1,25 @@
+<div class="container mt-3">
+  <h2>Modifier le Ticket</h2>
+  <form (ngSubmit)="onSubmit()" *ngIf="ticket" #f="ngForm">
+    <div class="mb-3">
+      <label for="title" class="form-label">Titre</label>
+      <input type="text" class="form-control" id="title" [(ngModel)]="ticket.title" name="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" [(ngModel)]="ticket.description" name="description" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" id="status" [(ngModel)]="ticket.status" name="status" required>
+        <option value="OPEN">Ouvert</option>
+        <option value="IN_PROGRESS">En cours</option>
+        <option value="RESOLVED">Résolu</option>
+        <option value="CLOSED">Fermé</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Modifier</button>
+    <a [routerLink]="['/tickets']" class="btn btn-secondary ms-2">Annuler</a>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </form>
+</div>

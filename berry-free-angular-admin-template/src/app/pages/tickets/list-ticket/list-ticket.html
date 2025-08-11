@@ -1,0 +1,36 @@
+<div class="container mt-3">
+  <h2>Liste des Tickets</h2>
+  <button class="btn btn-success mb-3" (click)="onAddTicket()">Ajouter</button>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Status</th>
+  <th>Utilisateur</th>
+  <th>ID Utilisateur</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticket of tickets">
+        <td>{{ ticket.id }}</td>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.description }}</td>
+        <td>{{ ticket.status }}</td>
+  <td>{{ getOwnerName(ticket) }}</td>
+  <td>{{ getOwnerId(ticket) }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm me-2" (click)="onEditTicket(ticket)">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="onDeleteTicket(ticket.id)">Supprimer</button>
+        </td>
+      </tr>
+      <tr *ngIf="tickets.length === 0">
+        <td colspan="7" class="text-center text-muted py-4">
+          Aucun ticket à afficher pour l'utilisateur courant.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
