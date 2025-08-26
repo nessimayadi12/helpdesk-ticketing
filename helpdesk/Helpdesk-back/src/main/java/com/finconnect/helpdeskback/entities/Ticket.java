@@ -1,6 +1,7 @@
 package com.finconnect.helpdeskback.entities;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -23,6 +24,9 @@ public class Ticket {
     @JsonIgnoreProperties({"tickets", "password"})
     private User user;
 
+    private Instant createdAt;
+    private Instant updatedAt;
+
     public Ticket() {}
 
     public Ticket(String title, String description, TicketStatus status, User user) {
@@ -30,6 +34,8 @@ public class Ticket {
         this.description = description;
         this.status = status;
         this.user = user;
+        this.createdAt = Instant.now();
+        this.updatedAt = this.createdAt;
     }
 
     // Getters & Setters
@@ -72,4 +78,20 @@ public class Ticket {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @PrePersist
+    private void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = this.createdAt;
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

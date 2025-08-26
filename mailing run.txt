@@ -1,0 +1,23 @@
+# Mail: actor-only delivery (no default To/Cc)
+$env:APP_MAIL_TO=""
+$env:APP_MAIL_CC=""
+$env:APP_MAIL_INCLUDE_OWNER_EMAIL="false"
+$env:APP_MAIL_ENABLED="true"
+$env:APP_MAIL_FROM="nessimayadi4@gmail.com"
+$env:APP_MAIL_FROMNAME="Support Comunik"
+
+# SMTP (keep your Gmail app password)
+$env:SPRING_MAIL_HOST="smtp.gmail.com"
+$env:SPRING_MAIL_PORT="587"
+$env:SPRING_MAIL_USERNAME="nessimayadi4@gmail.com"
+$env:SPRING_MAIL_PASSWORD="rlceuikskpftmhvv"
+$env:SPRING_MAIL_SMTP_AUTH="true"
+$env:SPRING_MAIL_SMTP_STARTTLS_ENABLE="true"
+$env:SPRING_MAIL_SMTP_STARTTLS_REQUIRED="true"
+$env:SPRING_MAIL_DEBUG="false"   # turn off noisy logs
+
+# Java and run
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot"
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+cd C:\Stage\helpdesk\Helpdesk-back
+.\mvnw.cmd -DskipTests spring-boot:run

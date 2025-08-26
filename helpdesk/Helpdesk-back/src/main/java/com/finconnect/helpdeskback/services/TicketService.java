@@ -20,6 +20,9 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MailService mailService;
+
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
@@ -49,7 +52,18 @@ public class TicketService {
                 }
             }
         }
-        return ticketRepository.save(ticket);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String actorEmail = null;
+        if (auth != null) {
+            String username = auth.getName();
+            if (username != null) {
+                User actor = userRepository.findByUsername(username);
+                actorEmail = actor != null ? actor.getEmail() : null;
+            }
+        }
+        Ticket saved = ticketRepository.save(ticket);
+        try { mailService.sendTicketCreated(saved, actorEmail); } catch (Exception ignored) {}
+    return saved;
     }
 
     public Ticket updateTicket(Long id, Ticket ticketDetails) {
@@ -57,7 +71,18 @@ public class TicketService {
         ticket.setTitle(ticketDetails.getTitle());
         ticket.setDescription(ticketDetails.getDescription());
         ticket.setStatus(ticketDetails.getStatus());
-        return ticketRepository.save(ticket);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String actorEmail = null;
+        if (auth != null) {
+            String username = auth.getName();
+            if (username != null) {
+                User actor = userRepository.findByUsername(username);
+                actorEmail = actor != null ? actor.getEmail() : null;
+            }
+        }
+        Ticket saved = ticketRepository.save(ticket);
+        try { mailService.sendTicketUpdated(saved, actorEmail); } catch (Exception ignored) {}
+    return saved;
     }
 
     public void deleteTicket(Long id) {
