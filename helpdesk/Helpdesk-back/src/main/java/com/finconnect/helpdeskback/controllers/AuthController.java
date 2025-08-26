@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:4200"})
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -74,6 +73,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        if (user.getUsername() == null || user.getUsername().isBlank() ||
+            user.getPassword() == null || user.getPassword().isBlank() ||
+            user.getEmail() == null || user.getEmail().isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Champs requis manquants"));
+        }
         if (userRepository.findByUsername(user.getUsername()) != null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username existe déjà"));
         }
