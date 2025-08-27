@@ -21,8 +21,11 @@ Gestion de tickets moderne (Angular 17 + Spring Boot 3) avec authentification JW
 Application de helpdesk permettant de créer, suivre et commenter des tickets. Elle propose des notifications email, un flux de commentaires en temps réel via SSE, un tableau de bord riche en statistiques, et une sécurité fine (JWT, rôles, propriété des tickets, reset mot de passe).
 
 <p align="center">
-  <img src="berry-free-angular-admin-template/src/assets/images/authentication/auth2-login.svg" alt="Écran de connexion" height="220" />
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/login.png" alt="Écran de connexion" height="220" />
   <img src="berry-free-angular-admin-template/src/assets/images/logo-dark.svg" alt="Logo" height="80" />
+  <br/>
+  <sub>Ajoutez vos captures réelles dans <code>src/assets/images/screenshots/</code> (voir section Captures).</sub>
+  
 </p>
 
 ## Fonctionnalités clés
@@ -58,11 +61,32 @@ Flux technique:
 
 ## Captures d’écran
 
-<img width="671" height="877" alt="image" src="https://github.com/user-attachments/assets/c1593d3c-b017-4d9e-ba4d-a3f73cbebfd7" />
+Placez vos images dans: `berry-free-angular-admin-template/src/assets/images/screenshots/`
 
-- Connexion: `assets/images/authentication/auth2-login.svg`
-- Logo clair: `assets/images/logo-dark.svg`
-- Avatar exemple: `assets/images/user/avatar-1.jpg`
+Noms suggérés (correspondant aux captures que vous avez partagées):
+
+- `login.png` – Écran de connexion
+- `dashboard-me.png` – Dashboard (non‑admin / Mes tickets)
+- `dashboard-admin.png` – Dashboard (admin / Tous les tickets)
+- `ticket-detail.png` – Détail d’un ticket avec commentaires
+- `tickets-list.png` – Liste des tickets avec recherche/filtre et badges “Nouveau”
+
+<div align="center">
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/login.png" alt="Login" width="360" />
+</div>
+
+<div align="center">
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/dashboard-me.png" alt="Dashboard (Mes tickets)" width="49%" />
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/dashboard-admin.png" alt="Dashboard (Admin)" width="49%" />
+</div>
+
+<div align="center">
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/ticket-detail.png" alt="Détail ticket" width="49%" />
+  <img src="berry-free-angular-admin-template/src/assets/images/screenshots/tickets-list.png" alt="Liste des tickets" width="49%" />
+</div>
+
+Astuce: pour un README “animé”, vous pouvez ajouter un GIF (ex. `demo.gif`) enregistré dans le même dossier et l’insérer en haut du README.
+
 
 ## Démarrage rapide
 
