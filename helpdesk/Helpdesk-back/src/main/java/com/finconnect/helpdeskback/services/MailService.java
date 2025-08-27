@@ -73,6 +73,33 @@ public class MailService {
         send(buildSubjectUpdated(t), buildBody("modifié", t), t, actorEmail);
     }
 
+    // Generic HTML email (e.g., password reset)
+    public void sendGeneric(String to, String subject, String html) {
+        try {
+            if (!enabled) {
+                log.warn("Mail disabled (app.mail.enabled=false). Skipping send: {}", subject);
+                return;
+            }
+            if (to == null || to.isBlank()) {
+                log.warn("No recipient for generic mail: {}", subject);
+                return;
+            }
+            MimeMessage msg = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+            try { helper.setFrom(from, fromName); } catch (Exception e) { helper.setFrom(from); }
+            helper.addTo(to.trim());
+            if (defaultCc != null && !defaultCc.isBlank()) {
+                for (String cc : defaultCc.split(",")) if (!cc.trim().isEmpty()) helper.addCc(cc.trim());
+            }
+            helper.setSubject(subject);
+            helper.setText(html, true);
+            mailSender.send(msg);
+            log.info("Mail sent: {} to {}", subject, to);
+        } catch (Exception e) {
+            log.error("Failed to send generic mail: {}", subject, e);
+        }
+    }
+
     private void send(String subject, String html, Ticket t, String actorEmail) {
         try {
             if (!enabled) {

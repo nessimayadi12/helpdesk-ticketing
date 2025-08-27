@@ -12,6 +12,10 @@ const routes: Routes = [
       {
         path: 'register',
         loadComponent: () => import('./register/register.component').then(m => m.default)
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./reset-password/reset-password.component').then(m => m.default)
       }
     ]
   }

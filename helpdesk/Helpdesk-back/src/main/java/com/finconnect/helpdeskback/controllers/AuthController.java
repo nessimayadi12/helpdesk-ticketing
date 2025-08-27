@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+import com.finconnect.helpdeskback.entities.PasswordResetToken;
+import com.finconnect.helpdeskback.repositories.PasswordResetTokenRepository;
+import com.finconnect.helpdeskback.services.MailService;
+import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,15 +31,23 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository resetRepo;
+    private final MailService mailService;
+    @Value("${app.frontend.base-url:http://localhost:4200}")
+    private String frontendBaseUrl;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
                           UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          PasswordResetTokenRepository resetRepo,
+                          MailService mailService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.resetRepo = resetRepo;
+        this.mailService = mailService;
     }
 
     @PostMapping("/login")
@@ -88,4 +103,58 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity.ok(Map.of("message", "Utilisateur créé"));
     }
+
+    // Request password reset: accept username or email
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgot(@RequestBody Map<String, String> req) {
+        String id = req.get("identifier");
+        if (id == null || id.isBlank()) return ResponseEntity.badRequest().body(Map.of("message", "Identifiant requis"));
+        User user = userRepository.findByUsername(id);
+        if (user == null) user = userRepository.findByEmail(id);
+        if (user == null) return ResponseEntity.ok(Map.of("message", "Si un compte existe, un email a été envoyé"));
+        PasswordResetToken prt = new PasswordResetToken();
+        prt.setUser(user);
+        prt.setToken(UUID.randomUUID().toString().replace("-", ""));
+        prt.setExpiresAt(Instant.now().plus(30, ChronoUnit.MINUTES));
+        resetRepo.save(prt);
+        try {
+            String link = buildResetLink(prt.getToken());
+            String html = "<div style='font-family:Arial,sans-serif;max-width:680px;margin:0 auto'>"+
+                          "<h2 style='color:#6c2bd9;margin:16px 0'>Réinitialisation de mot de passe</h2>"+
+                          "<p>Bonjour "+ (user.getUsername()!=null?user.getUsername():"") +",</p>"+
+                          "<p>Vous avez demandé à réinitialiser votre mot de passe. Ce lien est valable 30 minutes.</p>"+
+                          "<p><a href='"+link+"' style='display:inline-block;padding:10px 14px;background:#6c2bd9;color:#fff;text-decoration:none;border-radius:6px'>Réinitialiser mon mot de passe</a></p>"+
+                          "<p style='color:#666'>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>"+
+                          "</div>";
+            mailService.sendGeneric(user.getEmail(), "Réinitialisation de mot de passe", html);
+        } catch (Exception ignored) {}
+        return ResponseEntity.ok(Map.of("message", "Si un compte existe, un email a été envoyé"));
+    }
+
+    // Confirm reset: token + newPassword
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> reset(@RequestBody Map<String, String> req) {
+        String token = req.get("token");
+        String newPwd = req.get("newPassword");
+        if (token == null || token.isBlank() || newPwd == null || newPwd.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("message", "Paramètres manquants"));
+        PasswordResetToken prt = resetRepo.findByToken(token);
+        if (prt == null || prt.isUsed() || prt.getExpiresAt() == null || prt.getExpiresAt().isBefore(Instant.now()))
+            return ResponseEntity.status(400).body(Map.of("message", "Lien invalide ou expiré"));
+        User u = prt.getUser();
+        if (u == null) return ResponseEntity.status(400).body(Map.of("message", "Token invalide"));
+        u.setPassword(passwordEncoder.encode(newPwd));
+        userRepository.save(u);
+        prt.setUsed(true);
+        resetRepo.save(prt);
+        return ResponseEntity.ok(Map.of("message", "Mot de passe mis à jour"));
+    }
+
+    private String buildResetLink(String token) {
+        String base = frontendBaseUrl != null && !frontendBaseUrl.isBlank() ? frontendBaseUrl.trim() : "http://localhost:4200";
+        if (base.endsWith("/")) base = base.substring(0, base.length()-1);
+        return base + "/guest/reset-password?token=" + token;
+    }
+
+    // email sending delegated to MailService.sendGeneric
 }
