@@ -1,8 +1,6 @@
 <div class="row g-3">
-  <!-- Admin overview -->
-  <ng-container *ngIf="admin as aRaw">
-    <!-- Admin view -->
-    <ng-container *ngIf="isAdmin && adminVM as a">
+  <!-- Admin view -->
+  <ng-container *ngIf="isAdmin && adminVM as a">
                   <div class="col-12 col-md-3">
                     <div class="card">
                       <div class="card-header"><h5>Tickets (Total)</h5></div>
@@ -156,6 +154,14 @@
                     </div>
                   </div>
     </ng-container>
-  </ng-container>
+    <ng-container *ngIf="!isAdmin && !meVM">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-block">
+            <small class="text-muted">Aucune statistique disponible pour le moment. Vérifiez votre connexion et l’authentification.</small>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 </div>
 
