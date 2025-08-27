@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, switchMap } from 'rxjs';
 import { AuthService } from './auth.service';
 
 export interface Ticket {
@@ -8,11 +8,16 @@ export interface Ticket {
   title: string;
   description: string;
   status: 'OPEN' | 'IN_PROGRESS' | 'CLOSED' | 'RESOLVED';
+  // Timestamps from backend (ISO string or Date)
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
   // Optional ownership fields (depending on backend response shape)
   ownerUsername?: string;
   createdBy?: string;
   owner?: string;
   userId?: number;
+  // Augmented in list with last comment id if available
+  lastCommentId?: number;
 }
 
 @Injectable({
@@ -24,7 +29,9 @@ export class TicketService {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   getTickets(): Observable<Ticket[]> {
-    return this.http.get<Ticket[]>(this.apiUrl);
+    return this.http.get<Ticket[]>(this.apiUrl).pipe(
+      switchMap((tickets) => this.attachCommentStats(tickets))
+    );
   }
 
   getTicket(id: number): Observable<Ticket> {
@@ -49,7 +56,8 @@ export class TicketService {
         this.http.get<Ticket[]>(`${this.apiUrl}?owner=${encodeURIComponent(username)}`).pipe(
           catchError(() => of([]))
         )
-      )
+      ),
+      switchMap((tickets) => this.attachCommentStats(tickets))
     );
   }
 
@@ -81,5 +89,20 @@ export class TicketService {
 
   deleteTicket(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private attachCommentStats(tickets: Ticket[]): Observable<Ticket[]> {
+    if (!tickets?.length) return of(tickets);
+    const ids = tickets.map(t => t.id).filter((v): v is number => typeof v === 'number');
+    if (!ids.length) return of(tickets);
+    const params = new URLSearchParams();
+    ids.forEach(id => params.append('ids', String(id)));
+    return this.http.get<Array<{ ticketId: number; lastCommentId: number | null }>>(`http://localhost:8084/api/comments/stats?${params.toString()}`).pipe(
+      map(stats => {
+        const mapStats = new Map(stats.map(s => [s.ticketId, s.lastCommentId || 0]));
+        return tickets.map(t => ({ ...t, lastCommentId: mapStats.get(t.id as number) ?? 0 }));
+      }),
+      catchError(() => of(tickets))
+    );
   }
 }

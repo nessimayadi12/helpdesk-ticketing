@@ -18,6 +18,7 @@ const routes: Routes = [
       { path: '', redirectTo: '/default', pathMatch: 'full' },
       { path: 'default', loadComponent: () => import('./demo/dashboard/default/default.component').then(m => m.DefaultComponent) },
       { path: 'tickets', component: ListTicketComponent },
+  { path: 'tickets/:id', loadComponent: () => import('./pages/tickets/view-ticket/view-ticket').then(m => m.ViewTicketComponent) },
       { path: 'ajout-ticket', component: AddTicketComponent },
       { path: 'modifier-ticket/:id', component: EditTicketComponent },
   { path: 'users', component: UserListComponent, canActivate: [adminGuard] },

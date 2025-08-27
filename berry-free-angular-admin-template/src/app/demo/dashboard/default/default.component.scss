@@ -23,3 +23,30 @@ body.berry-dark .tab-content {
     background: #1565c0;
   }
 }
+
+// Dashboard readability tweaks
+.card-header h5 {
+  font-weight: 600;
+}
+
+.card-block h2,
+.card-block h3 {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+// Ensure badge text has enough contrast on light backgrounds
+// Solid badge tweaks (ensure good padding and rounded look)
+.badge[class*='bg-'] {
+  padding: 0.4rem 0.6rem;
+  border-radius: 999px;
+}
+
+// Slimmer progress bars with rounded ends for a cleaner look
+.progress {
+  background-color: rgba(108, 117, 125, 0.15);
+  border-radius: 6px;
+}
+.progress .progress-bar {
+  border-radius: 6px;
+}

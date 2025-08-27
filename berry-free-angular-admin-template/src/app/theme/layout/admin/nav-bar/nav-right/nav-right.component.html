@@ -149,7 +149,7 @@
               <div class="search-btn">
                 <i class="ti ti-search"></i>
               </div>
-              <input type="search" class="form-control" placeholder="Search profile options" />
+              <input type="search" class="form-control" placeholder="Search profile options" name="profile-search" autocomplete="off" />
             </form>
             <hr />
             <ng-scrollbar style="height: calc(100vh - 280px)" visibility="hover">
@@ -167,11 +167,11 @@
               <hr />
               <div class="settings-block bg-light-primary rounded">
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="dndMode" />
                   <label class="form-check-label" for="flexSwitchCheckDefault">Start DND Mode</label>
                 </div>
                 <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked />
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" name="allowNotifications" checked />
                   <label class="form-check-label" for="flexSwitchCheckChecked">Allow Notifications</label>
                 </div>
               </div>

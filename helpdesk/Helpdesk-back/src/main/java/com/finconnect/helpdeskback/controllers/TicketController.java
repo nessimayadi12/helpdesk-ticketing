@@ -28,22 +28,26 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public Ticket getTicketById(@PathVariable Long id) {
         return ticketService.getTicketById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket non trouvé"));
     }
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public Ticket createTicket(@RequestBody Ticket ticket) {
         return ticketService.createTicket(ticket);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated() and (hasRole('ADMIN') or @ticketSecurity.isOwner(#id))")
     public Ticket updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
         return ticketService.updateTicket(id, ticket);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated() and (hasRole('ADMIN') or @ticketSecurity.isOwner(#id))")
     public void deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
     }

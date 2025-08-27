@@ -1,126 +1,161 @@
-<div class="row">
-  <div class="col-xl-4 col-md-6">
-    <div class="card earning-card bg-secondary-dark text-white overflow-hidden">
-      <span class="round secondary-round small"></span>
-      <span class="round secondary-round big"></span>
-      <div class="card-body">
-        <div class="row">
-          <div class="col">
-            <div class="avatar avatar-lg">
-              <i class="text-white ti ti-credit-card f-24"></i>
-            </div>
-          </div>
-          <div class="col-auto">
-            <div class="btn-group" ngbDropdown>
-              <a type="button" class="avatar avatar-xs bg-secondary dropdown-toggle arrow-none" ngbDropdownToggle>
-                <i class="ti ti-dots"></i>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                <li><button class="dropdown-item" type="button">Import Card</button></li>
-                <li><button class="dropdown-item" type="button">Export</button></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <span class="text-white d-block f-34 f-w-500 my-2">
-          $500.00
-          <i class="ti ti-circle-arrow-up-right opacity-50"></i>
-        </span>
-        <p class="mb-0 opacity-50">Total Earning</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-4 col-md-6">
-    <div class="card earning-card bg-primary-dark text-white overflow-hidden">
-      <span class="round primary-round small"></span>
-      <span class="round primary-round big"></span>
-      <div class="card-body">
-        <app-chart-data-month />
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-4 col-md-12">
-    <div class="card total-income-card overflow-hidden bg-primary-dark text-white">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="avatar avatar-lg icon m-r-5">
-            <i class="text-white ti ti-layout-board-split f-24"></i>
-          </div>
-          <div class="ms-2">
-            <h4 class="text-white f-w-600 mb-1">$203k</h4>
-            <p class="mb-0 opacity-50 text-sm">Total Income</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card total-income-card warning overflow-hidden">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="avatar avatar-lg icon-warning m-r-5">
-            <i class="text-warning ti ti-layout-board-split f-24"></i>
-          </div>
-          <div class="ms-2">
-            <h4 class="f-w-600 mb-1">$203k</h4>
-            <p class="mb-0 opacity-50 text-sm">Total Income</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="row g-3">
+  <!-- Admin overview -->
+  <ng-container *ngIf="admin as aRaw">
+    <!-- Admin view -->
+    <ng-container *ngIf="isAdmin && adminVM as a">
+                  <div class="col-12 col-md-3">
+                    <div class="card">
+                      <div class="card-header"><h5>Tickets (Total)</h5></div>
+                      <div class="card-block">
+                        <h2 class="mb-1">{{ a.total }}</h2>
+                        <small class="text-muted">Tous les tickets</small>
+                      </div>
+                    </div>
+                  </div>
 
-  <div class="col-xl-8 col-md-12">
-    <app-bar-chart />
-  </div>
-  <div class="col-xl-4 col-md-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="row mb-3 align-items-center">
-          <div class="col">
-            <h4>Popular Stocks</h4>
-          </div>
-          <div class="col-auto"></div>
-        </div>
-        <div class="rounded bg-light-secondary overflow-hidden mb-3">
-          <div class="px-3 pt-3">
-            <div class="row mb-1 align-items-start">
-              <div class="col">
-                <h5 class="text-secondary mb-0">Bajaj Finery</h5>
-                <small class="text-muted">10% Profit</small>
-              </div>
-              <div class="col-auto">
-                <h4 class="mb-0">$1839.00</h4>
-              </div>
-            </div>
-          </div>
-          <app-bajaj-chart />
-        </div>
-        <ul class="list-group list-group-flush">
-          @for (list of ListGroup; track list) {
-            <li class="list-group-item px-0 {{ list.space }}">
-              <div class="row align-items-start">
-                <div class="col">
-                  <h5 class="mb-0">{{ list.name }}</h5>
-                  <small class="{{ list.color }}">{{ list.profit }}</small>
-                </div>
-                <div class="col-auto">
-                  <h4 class="mb-0">
-                    {{ list.invest }}
-                    <span class="ms-2 align-top avatar avatar-xxs {{ list.bgColor }}">
-                      <i class="{{ list.icon }} {{ list.color }}"></i>
-                    </span>
-                  </h4>
-                </div>
-              </div>
-            </li>
-          }
-        </ul>
-        <div class="text-center">
-          <a href="javascript:" class="b-b-primary text-primary f-w-500">
-            View all
-            <i class="ti ti-chevron-right"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+                  <div class="col-12 col-md-5">
+                    <div class="card">
+                      <div class="card-header"><h5>Par statut</h5></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let s of a.status" class="py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <span class="badge" [ngClass]="statusBadgeClass(s.name)">{{ s.name }}</span>
+                              <span><strong>{{ s.count }}</strong> <small class="text-muted">({{ s.percent }}%)</small></span>
+                            </div>
+                            <div class="progress mt-1" style="height:6px">
+                              <div class="progress-bar" [ngClass]="progressBarClass(s.name)" role="progressbar" [style.width.%]="s.percent"></div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <div class="card">
+                      <div class="card-header"><h5>Par utilisateur</h5></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let u of a.users" class="d-flex justify-content-between align-items-center py-1">
+                            <span>{{ u.username }}</span>
+                            <strong>{{ u.count }}</strong>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-header"><h5>Derniers tickets</h5></div>
+                      <div class="card-block">
+                        <div class="table-responsive">
+                          <table class="table table-sm align-middle mb-0">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Titre</th>
+                                <th>Propriétaire</th>
+                                <th>Statut</th>
+                                <th>Créé le</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let t of a.latest">
+                                <td><a [routerLink]="['/tickets', t.id]">{{ t.id }}</a></td>
+                                <td class="text-truncate" style="max-width: 320px"><a [routerLink]="['/tickets', t.id]">{{ t.title || t.sujet }}</a></td>
+                                <td>{{ t.user || '-' }}</td>
+                                <td><span class="badge" [ngClass]="statusBadgeClass(t.status)">{{ t.status }}</span></td>
+                                <td>{{ t.createdAt | date:'short' }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <!-- User view -->
+                <ng-container *ngIf="!isAdmin && meVM as m">
+                  <div class="col-12 col-md-4">
+                    <div class="card">
+                      <div class="card-header"><h5>Mes tickets (Total)</h5></div>
+                      <div class="card-block">
+                        <h2 class="mb-1">{{ m.total }}</h2>
+                        <small class="text-muted">Créés par moi</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <div class="card">
+                      <div class="card-header"><h5>Par statut</h5></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let s of m.status" class="py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <span class="badge" [ngClass]="statusBadgeClass(s.name)">{{ s.name }}</span>
+                              <span><strong>{{ s.count }}</strong> <small class="text-muted">({{ s.percent }}%)</small></span>
+                            </div>
+                            <div class="progress mt-1" style="height:6px">
+                              <div class="progress-bar" [ngClass]="progressBarClass(s.name)" role="progressbar" [style.width.%]="s.percent"></div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <div class="card">
+                      <div class="card-header"><h5>Activité (7 jours)</h5></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let d of m.activity" class="d-flex align-items-center py-1">
+                            <small class="text-muted" style="width:70px">{{ d.label }}</small>
+                            <div class="progress flex-grow-1 mx-2" style="height:6px">
+                              <div class="progress-bar bg-primary" role="progressbar" [style.width.%]="d.percent"></div>
+                            </div>
+                            <small class="text-muted" style="width:30px; text-align:right">{{ d.count }}</small>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <div class="card">
+                      <div class="card-header"><h5>Dernières mises à jour</h5></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let t of m.recentUpdated" class="d-flex justify-content-between align-items-center py-1">
+                            <span class="text-truncate" style="max-width: 70%"><a [routerLink]="['/tickets', t.id]">#{{ t.id }} · {{ t.title || t.sujet }}</a></span>
+                            <span>
+                              <span class="badge me-2" [ngClass]="statusBadgeClass(t.status)">{{ t.status }}</span>
+                              <small class="text-muted">{{ t.updatedAt | date:'short' }}</small>
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <div class="card">
+                      <div class="card-header d-flex justify-content-between align-items-center"><h5 class="mb-0">Top tickets commentés</h5><small class="text-muted">Total: {{ m.comments?.total || 0 }}</small></div>
+                      <div class="card-block">
+                        <ul class="list-unstyled mb-0">
+                          <li *ngFor="let t of m.comments?.top" class="d-flex justify-content-between align-items-center py-1">
+                            <span class="text-truncate" style="max-width: 70%"><a [routerLink]="['/tickets', t.id]">#{{ t.id }} · {{ t.title }}</a></span>
+                            <span class="badge bg-secondary text-white">{{ t.count }}</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+    </ng-container>
+  </ng-container>
 </div>
+

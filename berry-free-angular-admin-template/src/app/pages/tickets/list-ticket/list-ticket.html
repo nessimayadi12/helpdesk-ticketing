@@ -1,6 +1,15 @@
 <div class="container mt-3">
   <h2>Liste des Tickets</h2>
-  <button class="btn btn-success mb-3" (click)="onAddTicket()">Ajouter</button>
+  <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+    <button class="btn btn-success" (click)="onAddTicket()">Ajouter</button>
+    <div class="ms-auto d-flex gap-2 flex-wrap">
+      <input type="search" class="form-control" style="min-width: 220px" placeholder="Rechercher (id, titre, description, utilisateur)" [(ngModel)]="search" (ngModelChange)="applyFilters()" />
+      <select class="form-select" style="min-width: 180px" [(ngModel)]="status" (ngModelChange)="applyFilters()">
+        <option *ngFor="let opt of statusOptions" [ngValue]="opt.value">{{ opt.label }}</option>
+      </select>
+      <button class="btn btn-outline-secondary" (click)="resetFilters()">Réinitialiser</button>
+    </div>
+  </div>
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
@@ -8,27 +17,35 @@
         <th>Titre</th>
         <th>Description</th>
         <th>Status</th>
+  <th>Date de création</th>
   <th>Utilisateur</th>
   <th>ID Utilisateur</th>
-        <th>Actions</th>
+  <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let ticket of tickets">
+  <tr *ngFor="let ticket of filteredTickets">
         <td>{{ ticket.id }}</td>
         <td>{{ ticket.title }}</td>
         <td>{{ ticket.description }}</td>
         <td>{{ ticket.status }}</td>
+        <td>
+          {{ ticket.createdAt ? (ticket.createdAt | date:'d MMMM y HH:mm':'':'fr') : '-' }}
+        </td>
   <td>{{ getOwnerName(ticket) }}</td>
   <td>{{ getOwnerId(ticket) }}</td>
-        <td>
+    <td>
+          <span *ngIf="(ticket.lastCommentId || 0) > ((lastSeen[(ticket.id || 0)] || 0))" title="Nouveau commentaire"
+        style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.2);margin-right:6px;vertical-align:middle;"></span>
+          <span *ngIf="(ticket.lastCommentId || 0) > ((lastSeen[(ticket.id || 0)] || 0))" class="badge bg-danger me-2">Nouveau</span>
+      <button class="btn btn-outline-secondary btn-sm me-2" [routerLink]="['/tickets', ticket.id]" (click)="markSeen((ticket.id || 0), ticket.lastCommentId || 0)">Voir</button>
           <button class="btn btn-primary btn-sm me-2" (click)="onEditTicket(ticket)">Modifier</button>
           <button class="btn btn-danger btn-sm" (click)="onDeleteTicket(ticket.id)">Supprimer</button>
         </td>
       </tr>
-      <tr *ngIf="tickets.length === 0">
-        <td colspan="7" class="text-center text-muted py-4">
-          Aucun ticket à afficher pour l'utilisateur courant.
+    <tr *ngIf="filteredTickets.length === 0">
+        <td colspan="8" class="text-center text-muted py-4">
+      Aucun ticket ne correspond aux filtres.
         </td>
       </tr>
     </tbody>
