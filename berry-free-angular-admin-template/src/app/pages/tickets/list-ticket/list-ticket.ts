@@ -186,9 +186,34 @@ export class ListTicketComponent implements OnInit, OnDestroy {
   onDeleteTicket(id: number) {
     if (confirm('Voulez-vous vraiment supprimer ce ticket ?')) {
       this.ticketService.deleteTicket(id).subscribe({
-        next: () => this.loadTickets(),
-        error: (err) => console.error('Erreur lors de la suppression', err)
+        next: () => {
+          this.notif.success('Ticket supprimé');
+          this.loadTickets();
+        },
+        error: (err) => {
+          if (err?.status === 403) {
+            this.notif.error("Action non autorisée: vous ne pouvez supprimer que vos propres tickets.");
+          } else if (err?.status === 401) {
+            this.notif.error("Session expirée. Veuillez vous reconnecter.");
+          } else {
+            this.notif.error("Erreur lors de la suppression");
+          }
+          console.error('Erreur lors de la suppression', err);
+        }
       });
     }
+  }
+
+  isOwner(t: Ticket): boolean {
+    const me = (this.auth.getUsername() || '').toLowerCase();
+    const anyT: any = t as any;
+    const direct = (t.ownerUsername || t.createdBy || t.owner || '') as string;
+    const fromObj = anyT.user && (anyT.user.username || anyT.user.name || anyT.user.email);
+    const owner = (direct || fromObj || '').toString().toLowerCase();
+    return !!me && !!owner && me === owner;
+  }
+
+  canManage(t: Ticket): boolean {
+    return this.isAdmin || this.isOwner(t);
   }
 }

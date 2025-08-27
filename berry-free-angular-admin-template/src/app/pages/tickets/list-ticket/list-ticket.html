@@ -38,9 +38,9 @@
           <span *ngIf="(ticket.lastCommentId || 0) > ((lastSeen[(ticket.id || 0)] || 0))" title="Nouveau commentaire"
         style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.2);margin-right:6px;vertical-align:middle;"></span>
           <span *ngIf="(ticket.lastCommentId || 0) > ((lastSeen[(ticket.id || 0)] || 0))" class="badge bg-danger me-2">Nouveau</span>
-      <button class="btn btn-outline-secondary btn-sm me-2" [routerLink]="['/tickets', ticket.id]" (click)="markSeen((ticket.id || 0), ticket.lastCommentId || 0)">Voir</button>
-          <button class="btn btn-primary btn-sm me-2" (click)="onEditTicket(ticket)">Modifier</button>
-          <button class="btn btn-danger btn-sm" (click)="onDeleteTicket(ticket.id)">Supprimer</button>
+    <button class="btn btn-outline-secondary btn-sm me-2" [routerLink]="['/tickets', ticket.id]" (click)="markSeen((ticket.id || 0), ticket.lastCommentId || 0)">Voir</button>
+      <button *ngIf="canManage(ticket)" class="btn btn-primary btn-sm me-2" (click)="onEditTicket(ticket)">Modifier</button>
+      <button *ngIf="canManage(ticket)" class="btn btn-danger btn-sm" (click)="onDeleteTicket(ticket.id)">Supprimer</button>
         </td>
       </tr>
     <tr *ngIf="filteredTickets.length === 0">

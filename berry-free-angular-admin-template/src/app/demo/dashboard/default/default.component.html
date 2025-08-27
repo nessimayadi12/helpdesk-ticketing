@@ -154,11 +154,11 @@
                     </div>
                   </div>
     </ng-container>
-    <ng-container *ngIf="!isAdmin && !meVM">
+  <ng-container *ngIf="!isAdmin && (meError || !meVM)">
       <div class="col-12">
         <div class="card">
           <div class="card-block">
-            <small class="text-muted">Aucune statistique disponible pour le moment. Vérifiez votre connexion et l’authentification.</small>
+      <small class="text-muted">Statistiques indisponibles. Vérifiez que le serveur backend est démarré et que vous êtes connecté.</small>
           </div>
         </div>
       </div>

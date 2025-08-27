@@ -18,6 +18,7 @@ export class DefaultComponent {
   isAdmin = false;
   admin: any = null;
   me: any = null;
+  meError = false;
 
   // view models derived from stats for cleaner templates
   adminVM: {
@@ -44,9 +45,23 @@ export class DefaultComponent {
         this.adminVM = this.buildAdminVm(d);
       });
     }
-    this.stats.me().subscribe((d) => {
-      this.me = d;
-      this.meVM = this.buildMeVm(d);
+    this.stats.me().subscribe({
+      next: (d) => {
+        this.me = d;
+        this.meVM = this.buildMeVm(d);
+      },
+      error: () => {
+        this.meError = true;
+        // minimal empty structure so the UI doesn't stay blank
+        this.meVM = {
+          total: 0,
+          status: [],
+          latest: [],
+          activity: [],
+          recentUpdated: [],
+          comments: { total: 0, top: [] }
+        };
+      }
     });
   }
 
