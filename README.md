@@ -58,7 +58,7 @@ Flux technique:
 
 ## Captures d’écran
 
-> Remplacez/ajoutez vos propres captures (PNG/JPG/GIF) dans `berry-free-angular-admin-template/src/assets/images/` puis référencez‑les ici.
+<img width="671" height="877" alt="image" src="https://github.com/user-attachments/assets/c1593d3c-b017-4d9e-ba4d-a3f73cbebfd7" />
 
 - Connexion: `assets/images/authentication/auth2-login.svg`
 - Logo clair: `assets/images/logo-dark.svg`
